@@ -8,6 +8,7 @@ The goal of this project is to provide the most secure and supported <code>nginx
 * Threads AIO
 * CHACHA20_POLY1305
 * x25519 support
+* TLS 1.3 support
 * Multiple <code>ssl_ecdh_curve</code> support
 * Dual certificate support for RSA/ECDSA combo
 * And much more ...
@@ -22,6 +23,7 @@ Le but de ce projet est de proposer une configuration NGINX <code>nginx.conf</co
 * Threads AIO
 * CHACHA20_POLY1305
 * x25519 support
+* TLS 1.3 support
 * Multiple <code>ssl_ecdh_curve</code> support
 * Dual certificate support for RSA/ECDSA combo
 * And much more ...
