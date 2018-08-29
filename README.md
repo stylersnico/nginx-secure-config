@@ -1,6 +1,6 @@
 # Secure Configuration for NGINX
 
-##English
+## English
 
 The goal of this project is to provide the most secure and supported <code>nginx.conf</code> file with support for very latest improvements like:
 
@@ -15,7 +15,7 @@ The goal of this project is to provide the most secure and supported <code>nginx
 
 If you want to use a NGINX release that support every of this, you can use: https://github.com/stylersnico/nginx-openssl-chacha-naxsi
 
-##Francais
+## Francais
 
 Le but de ce projet est de proposer une configuration NGINX <code>nginx.conf</code> incluant les derniers ajouts en termes de performances et de sécurité comme :
 
