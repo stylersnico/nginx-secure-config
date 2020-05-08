@@ -1,7 +1,5 @@
 # Secure Configuration for NGINX
 
-## English
-
 The goal of this project is to provide the most secure and supported <code>nginx.conf</code> file with support for very latest improvements like:
 
 * HTTP2 with ALPN
