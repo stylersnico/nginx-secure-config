@@ -15,6 +15,11 @@ The goal of this project is to provide the most secure and supported <code>nginx
 * Brotli compression
 * And much more ...
 
+Results :
+
+* A+ on SSL Labs
+* A on Security Headers (.io)
+
 If you want to use a NGINX release that support every of this, you can use: https://github.com/stylersnico/nginx-openssl-chacha-naxsi
 
 If you want to use a NGINX release bundled with your system, you can use the `nginx.conf-debian-extras` that is tested against nginx-extras under Debian 10 and support every of the above except 0-RTT and Brotli.
