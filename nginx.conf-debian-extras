@@ -59,7 +59,8 @@ http {
         server_tokens off;
 
         ##Common headers for security
-        more_set_headers "Permissions-Policy: geolocation=();midi=();notifications=();push=();sync-xhr=();microphone=();camera=();magnetometer=();gyroscope=();speaker self;vibrate=();fullscreen self;payment=();;"        more_set_headers "Strict-Transport-Security : max-age=15768000; includeSubDomains; preload";
+        more_set_headers "Permissions-Policy: geolocation=();midi=();notifications=();push=();sync-xhr=();microphone=();camera=();magnetometer=();gyroscope=();speaker self;vibrate=();fullscreen self;payment=();;"
+        more_set_headers "Strict-Transport-Security : max-age=15768000; includeSubDomains; preload";
         more_set_headers "X-Frame-Options : SAMEORIGIN";
         more_set_headers "Content-Security-Policy : default-src https: data: 'unsafe-inline' 'unsafe-eval' always";
         more_set_headers "X-Xss-Protection : 1; mode=block";
