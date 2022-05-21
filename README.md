@@ -8,7 +8,6 @@ The goal of this project is to provide the most secure and supported <code>nginx
 * x25519 support
 * TLS 1.3 support
 * Multiple <code>ssl_ecdh_curve</code> support
-* Dual certificate support for RSA/ECDSA combo
 * 0-RTT support for TLS 1.3
 * Crowdsec NGINX bouncer (Don't forget to uncomment the line at the beginning for LUA support)
 * And much more ...
