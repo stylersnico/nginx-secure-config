@@ -2,6 +2,7 @@
 
 The goal of this project is to provide the most secure and supported <code>nginx.conf</code> file with support for very latest improvements like:
 
+* NEW : Added support for Post-Quantum Cryptography (PQC) by default in <code>ssl_ecdh_curve</code>, see https://blog.nginx.org/blog/pqc-nginx for more information. 
 * HTTP2 with ALPN
 * Threads AIO
 * CHACHA20_POLY1305
