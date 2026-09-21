@@ -1,0 +1,184 @@
+# FreeBSD 15.1 nginx-full configuration
+# Adapted from the Debian nginx-extras config
+# Made for nginx-full package: pkg install nginx-full
+
+user www;
+worker_processes auto;
+# Note: worker_cpu_affinity is Linux-specific, removed for FreeBSD
+pid /var/run/nginx.pid;
+
+# Module loading
+load_module /usr/local/libexec/nginx/ngx_http_headers_more_filter_module.so;
+
+# Optional modules:
+#load_module /usr/local/libexec/nginx/ndk_http_module.so;
+#load_module /usr/local/libexec/nginx/ngx_http_lua_module.so;
+#load_module /usr/local/libexec/nginx/ngx_http_geoip2_module.so;
+
+events {
+    worker_connections 16384;
+    multi_accept on;
+    use kqueue;
+}
+
+# worker_rlimit_nofile = (worker_connections * 1) + 500
+# worker_rlimit_nofile = (worker_connections * 2) + 500 if you use nginx as reverse proxy
+worker_rlimit_nofile 16884;
+
+http {
+    ##
+    # Basic Settings
+    ##
+
+    server_names_hash_bucket_size 64;
+    # server_name_in_redirect off;
+
+    include /usr/local/etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    ##
+    # Virtual Hosts and configs includes
+    ##
+    include /usr/local/etc/nginx/conf.d/*.conf;
+    include /usr/local/etc/nginx/sites-enabled/*;
+
+    ##
+    # TLS Configuration
+    ##
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+    # For older systems, see: https://blog.nginx.org/blog/pqc-nginx
+    ssl_ecdh_curve X25519MLKEM768:X25519:prime256v1;
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:SSL:50m;
+    ssl_session_tickets off;
+    ssl_ciphers 'EECDH+AESGCM:EDH+AESGCM:!AES128';
+    ssl_prefer_server_ciphers off;
+
+    ##
+    # Headers - Security Settings
+    ##
+
+    # Hide Nginx version
+    server_tokens off;
+
+    # Common security headers
+    # Adapt these to your website needs - may break legacy CMS or poorly built websites
+    more_set_headers "Content-Security-Policy : default-src https: data: 'unsafe-inline' 'unsafe-eval' always";
+    more_set_headers "Permissions-Policy: geolocation=();midi=();notifications=();push=();sync-xhr=();microphone=();camera=();magnetometer=();gyroscope=();speaker self;vibrate=();fullscreen self;payment=();;";
+    more_set_headers "Strict-Transport-Security : max-age=15768000; includeSubDomains; preload";
+    more_set_headers "X-Frame-Options : SAMEORIGIN";
+    more_set_headers "X-Xss-Protection : 1; mode=block";
+    more_set_headers "X-Content-Type-Options : nosniff";
+    more_set_headers "Referrer-Policy : strict-origin-when-cross-origin";
+    more_set_headers "Server : Follow Beastie";
+    more_set_headers "Cross-Origin-Opener-Policy : same-origin";
+    more_set_headers "Cross-Origin-Embedder-Policy : unsafe-none";
+    more_set_headers "Origin-Agent-Cluster : ?1";
+    more_set_headers "Permissions-Policy : accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), clipboard-read=(), clipboard-write=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(), gamepad=(), geolocation=(), gyroscope=(), hid=(), idle-detection=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), serial=(), speaker-selection=(), sync-xhr=(), usb=(), xr-spatial-tracking=()";
+
+    ##
+    # OCSP Stapling
+    ##
+
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    # Add signing certificates here if needed
+    # ssl_trusted_certificate /etc/ssl/private/ocsp-certs.pem;
+    resolver 1.0.0.1 8.8.4.4 valid=300s;
+    resolver_timeout 5s;
+
+    ##
+    # Logging
+    ##
+
+    # Disabled for performance (uncomment to enable):
+    # access_log /var/log/nginx/access.log;
+    access_log off;
+    error_log /var/log/nginx/error.log;
+
+    ##
+    # Gzip Compression
+    ##
+
+    gzip on;
+    gzip_disable "msie6";
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_buffers 16 8k;
+    gzip_http_version 1.1;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+
+    ##
+    # GeoIP Support (Optional)
+    ##
+
+    # Install geoip data: pkg install GeoIP GeoIP-data
+    # geoip_country  /usr/share/GeoIP/GeoIP.dat;
+    # geoip_city     /usr/share/GeoIP/GeoLiteCity.dat;
+
+    ##
+    # Performance and Caching
+    ##
+
+    # Use thread pool for file I/O - see https://www.nginx.com/blog/thread-pools-boost-performance-9x/
+    aio threads;
+
+    # Enable 0-RTT support for TLS 1.3
+    ssl_early_data on;
+    proxy_set_header Early-Data $ssl_early_data;
+
+    ##
+    # Simple DOS Mitigation
+    ##
+
+    # Max connections per IP
+    limit_conn_zone $binary_remote_addr zone=limit_per_ip:10m;
+    limit_conn limit_per_ip 40;
+
+    # Max requests per second by IP
+    limit_req_zone $binary_remote_addr zone=allips:10m rate=400r/s;
+    limit_req zone=allips burst=400 nodelay;
+
+    ##
+    # PHP-FPM Configuration (if used)
+    ##
+
+    fastcgi_buffers 256 32k;
+    fastcgi_buffer_size 256k;
+    fastcgi_connect_timeout 4s;
+    fastcgi_send_timeout 120s;
+    fastcgi_read_timeout 120s;
+    fastcgi_busy_buffers_size 512k;
+    fastcgi_temp_file_write_size 512K;
+    reset_timedout_connection on;
+
+    ##
+    # File Caching
+    ##
+
+    open_file_cache max=2000 inactive=20s;
+    open_file_cache_valid 60s;
+    open_file_cache_min_uses 5;
+    open_file_cache_errors off;
+
+    ##
+    # Client Configuration
+    ##
+
+    client_max_body_size 50M;
+    client_body_buffer_size 1m;
+    client_body_timeout 15;
+    client_header_timeout 15;
+    keepalive_timeout 65;
+    send_timeout 15;
+
+    ##
+    # Network Optimization
+    ##
+
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay on;
+}
