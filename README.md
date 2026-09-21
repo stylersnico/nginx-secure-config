@@ -18,7 +18,9 @@ Results :
 * A+ on SSL Labs
 * A on Security Headers (.io)
 
-If you want to use a NGINX release that support every of this, you need to use the package **nginx-extras** on Debian 11 that support every feature listed here.
+If you want to use a NGINX release that support every of this, you need to use the package **nginx-extras** on Debian 13 that support every feature listed here.
+For FreeBSD 15, you will need the package **nginx-full**.
+
 
 --------
 
